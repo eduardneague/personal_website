@@ -23,8 +23,8 @@ const Canvas: React.FC = (props): JSX.Element => {
 
         // Canvas Initializaztion
  
-        canvas.width = 1024
-        canvas.height = 576
+        canvas.width = 1920 
+        canvas.height = 937
 
         // Platform Constructor Class 
 
