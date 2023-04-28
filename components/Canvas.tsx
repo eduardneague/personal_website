@@ -1,7 +1,7 @@
 import React, {useRef, useEffect} from 'react'
 import platform1 from '../public/platform_assets/Platform_1.png'
 import platform2 from '../public/platform_assets/Platform_2.png'
-import playerNeutral from '../public/player_assets/Player_Neutral.svg'
+// import playerNeutral from '../public/player_assets/Player_Neutral.svg'
 
 import  {
     PlayerPositionObject, 
