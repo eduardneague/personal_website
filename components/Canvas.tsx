@@ -1,6 +1,10 @@
 import React, {useRef, useEffect} from 'react'
-import platform1 from '../public/platform_assets/Platform_1.png'
-import platform2 from '../public/platform_assets/Platform_2.png'
+
+import platform1 from '../src/game_assets/platform_assets/Platform_1.png'
+import platform2 from '../src/game_assets/platform_assets/Platform_2.png'
+
+import tree from '../src/game_assets/misc_assets/misc_tree.png'
+import background from '../src/game_assets/misc_assets/misc_background.png'
 // import playerNeutral from '../public/player_assets/Player_Neutral.svg'
 
 import  {
@@ -15,16 +19,35 @@ import {
     PlatformSizeObject
 } from '../src/types/PlatformTypes'
 
+import {
+    MiscPositionObject,
+    MiscSizeObject
+} from '../src/types/MiscTypes'
+
+import {
+    ScenaryPositionObject,
+    ScenarySizeObject
+} from '../src/types/ScenaryTypes'
+
 const Canvas: React.FC = (props): JSX.Element => {
     const canvasRef = useRef(null)
+
     useEffect(() => {
         const canvas: any = canvasRef.current
         const context = canvas.getContext('2d')
 
         // Canvas Initializaztion
  
-        canvas.width = 1920 
-        canvas.height = 937
+        canvas.width = innerWidth 
+        canvas.height = innerHeight
+
+        // HTMLImageElement Creation Function
+
+        const createImage = (imageSrc: string): HTMLImageElement => {
+            const image: HTMLImageElement = new Image()
+            image.src = imageSrc
+            return image
+        }
 
         // Platform Constructor Class 
 
@@ -40,29 +63,115 @@ const Canvas: React.FC = (props): JSX.Element => {
             }
 
             draw(): void {
-                context.drawImage(this.image, this.position.X_Position, this.position.Y_Position)
+                context.drawImage(
+                    this.image, 
+                    this.position.X_Position, 
+                    this.position.Y_Position
+                )
             }
         }
 
-        // Platform Properties
-        const platform_1_image = new Image()
-        platform_1_image.src = platform1
+        const platform_1_image = createImage(platform1)
+        const platform_2_image = createImage(platform2)
 
-        const platform_2_image = new Image() 
-        platform_2_image.src = platform2
-  
         const platformsArray: Platform[] = [
-            new Platform(
-                    {X_Position: 100, Y_Position: 300}, 
+                new Platform(
+                    {X_Position: 1200, Y_Position: 570}, 
                     {width: platform_1_image.width, height: platform_1_image.height}, 
                     platform_1_image
                 ),
                 new Platform(
-                    {X_Position: 1300, Y_Position: 700}, 
-                    {width: platform_1_image.width, height: platform_1_image.height}, 
-                    platform_1_image
+                    {X_Position: -30, Y_Position: 750}, 
+                    {width: platform_2_image.width, height: platform_2_image.height}, 
+                    platform_2_image
                 ),
+                new Platform(
+                    {X_Position: platform_2_image.width * 1 - 31, Y_Position: 750}, 
+                    {width: platform_2_image.width, height: platform_2_image.height}, 
+                    platform_2_image
+                ),
+                new Platform(
+                    {X_Position: platform_2_image.width * 2 - 32, Y_Position: 750}, 
+                    {width: platform_2_image.width, height: platform_2_image.height}, 
+                    platform_2_image
+                ),
+                new Platform(
+                    {X_Position: platform_2_image.width * 3 - 33, Y_Position: 750}, 
+                    {width: platform_2_image.width, height: platform_2_image.height}, 
+                    platform_2_image
+                ),
+        ]
+
+        // =======================================================================================================
+        // I don't know how to do this modularly :(
+
+        // Misc Constructor Class
+
+        class Misc {
+            position: MiscPositionObject;
+            size: MiscSizeObject;
+            image: HTMLElement;
             
+            constructor(position: MiscPositionObject, size: MiscSizeObject, image: HTMLElement) {
+                this.position = position
+                this.size = size
+                this.image = image
+            }
+
+            draw(): void {
+                context.drawImage(
+                    this.image, 
+                    this.position.X_Position, 
+                    this.position.Y_Position, 
+                    this.size.width, 
+                    this.size.height
+                )
+            }
+        }
+
+        const misc_tree_image = createImage(tree)
+
+        const miscObjects = [
+            new Misc(
+                {X_Position: 40, Y_Position: 310}, 
+                {width: 300, height: 450}, 
+                misc_tree_image),
+        ]
+
+        // =======================================================================================================
+        // I don't know how to do this modularly :(
+
+        // Scenary Constructor Class
+
+        class Scenary {
+            position: ScenaryPositionObject;
+            size: ScenarySizeObject;
+            image: HTMLElement;
+            
+            constructor(position: ScenaryPositionObject, size: ScenarySizeObject, image: HTMLElement) {
+                this.position = position
+                this.size = size
+                this.image = image
+            }
+
+            draw(): void {
+                context.drawImage(
+                    this.image, 
+                    this.position.X_Position, 
+                    this.position.Y_Position, 
+                    this.size.width, 
+                    this.size.height
+                )
+            }
+        }
+
+        const misc_background_image = createImage(background)
+
+        const scenaryObjects = [
+            new Scenary(
+                {X_Position: 0, Y_Position: 0}, 
+                {width: 1920, height: 1080}, 
+                misc_background_image),
         ]
 
         // =======================================================================================================
@@ -78,16 +187,23 @@ const Canvas: React.FC = (props): JSX.Element => {
             position: PlayerPositionObject;
             size: PlayerSizeObject;
             velocity: PlayerVelocityObject;
+            speed: number
 
-            constructor(position: PlayerPositionObject, size: PlayerSizeObject, velocity: PlayerVelocityObject) {
+            constructor(position: PlayerPositionObject, size: PlayerSizeObject, velocity: PlayerVelocityObject, speed: number) {
                 this.position = position
                 this.size = size
                 this.velocity = velocity
+                this.speed = speed
             }
     
             draw(): void {
                 context.fillStyle = 'red'
-                context.fillRect(this.position.X_Position, this.position.Y_Position, this.size.width, this.size.height)
+                context.fillRect(
+                    this.position.X_Position, 
+                    this.position.Y_Position, 
+                    this.size.width, 
+                    this.size.height
+                )
             }
 
             update(): void {
@@ -104,11 +220,12 @@ const Canvas: React.FC = (props): JSX.Element => {
 
         // Player Properties
 
-        const playerPosition: PlayerPositionObject = {X_Position: 30, Y_Position: 30}
+        const playerPosition: PlayerPositionObject = {X_Position: 100, Y_Position: 0}
         const playerSize: PlayerSizeObject = {width: 30, height: 30}
         const playerVelocity: PlayerVelocityObject = {X_Velocity: 0, Y_Velocity: 0}
+        const playerSpeed: number = 5
 
-        const player = new Player(playerPosition, playerSize, playerVelocity)
+        const player = new Player(playerPosition, playerSize, playerVelocity, playerSpeed)
         const keys: PlayerKeysObject = {
             right: {
                 pressed: false
@@ -126,9 +243,17 @@ const Canvas: React.FC = (props): JSX.Element => {
         let scrollOffset: number = 0
 
         const animate = (): void => {
+            
             requestAnimationFrame(animate)
-            context.fillStyle = "black"
-            context.fillRect(0, 0, canvas.width, canvas.height)
+            context.clearRect(0, 0, canvas.width, canvas.height)
+
+            scenaryObjects.forEach((object) => {
+                object.draw()
+            })
+ 
+            miscObjects.forEach((object) => {
+                object.draw()
+            })
 
             platformsArray.forEach((platform) => {
                 platform.draw()
@@ -138,27 +263,44 @@ const Canvas: React.FC = (props): JSX.Element => {
             // Movement Handler + Background Scrolling
 
             if(keys.right.pressed && player.position.X_Position < 700) { // Right Key + Movement Limit
-                player.velocity.X_Velocity = 5
+                player.velocity.X_Velocity = player.speed
             }
             else if(keys.left.pressed && player.position.X_Position > 200) { // Left Key + Movement Limit
-                player.velocity.X_Velocity = -5
+                player.velocity.X_Velocity = -player.speed
             }  
-            else if (keys.up.pressed) { // Up Key
-                player.velocity.Y_Velocity = -20
+            else if (keys.up.pressed) { // Jump Key
+                player.velocity.Y_Velocity = -13
             } else {
                 player.velocity.X_Velocity = 0
 
+                // Background Scrolling
+
+                // Scrolling (To the left) when Moving Right
+
                 if(keys.right.pressed) {
-                    scrollOffset += 5 
+                    scrollOffset += player.speed
+
+                    miscObjects.forEach((object) => {
+                        object.position.X_Position -= player.speed
+                    })
+
                     platformsArray.forEach((platform) => {
-                        platform.position.X_Position -= 5
-                    }) // Scrolling (To the left) when Moving Right
+                        platform.position.X_Position -= player.speed
+                    }) 
                 }
+
+                // Scrolling (To the Right) when Moving Left
+
                 if(keys.left.pressed) {
-                    scrollOffset -= 5 
+                    scrollOffset -= player.speed 
+
+                    miscObjects.forEach((object) => {
+                        object.position.X_Position += player.speed
+                    })
+
                     platformsArray.forEach((platform) => {
-                        platform.position.X_Position += 5
-                    }) // Scrolling (To the Right) when Moving Left
+                        platform.position.X_Position += player.speed
+                    }) 
                 }
 
                 // Win Condition
@@ -177,7 +319,7 @@ const Canvas: React.FC = (props): JSX.Element => {
                     && player.position.X_Position <= platform.position.X_Position + platform.size.width) {
                     player.velocity.Y_Velocity = 0
                 }
-        })
+            })
 
         }
         animate()
