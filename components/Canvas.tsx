@@ -5,7 +5,6 @@ import platform2 from '../src/game_assets/platform_assets/Platform_2.png'
 
 import tree from '../src/game_assets/misc_assets/misc_tree.png'
 import background from '../src/game_assets/misc_assets/misc_background.png'
-// import playerNeutral from '../public/player_assets/Player_Neutral.svg'
 
 import  {
     PlayerPositionObject, 
