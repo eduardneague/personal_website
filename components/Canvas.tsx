@@ -4,7 +4,6 @@ import platform1 from '../src/game_assets/platform_assets/Platform_1.png'
 import platform2 from '../src/game_assets/platform_assets/Platform_2.png'
 
 import tree from '../src/game_assets/misc_assets/misc_tree.png'
-import background from '../src/game_assets/misc_assets/misc_background.png'
 
 import  {
     PlayerPositionObject, 
@@ -130,7 +129,7 @@ const Canvas: React.FC = (props): JSX.Element => {
 
         const misc_tree_image = createImage(tree)
 
-        const miscObjects = [
+        const miscObjects: Misc[] = [
             new Misc(
                 {X_Position: 40, Y_Position: 310}, 
                 {width: 300, height: 450}, 
@@ -164,13 +163,8 @@ const Canvas: React.FC = (props): JSX.Element => {
             }
         }
 
-        const misc_background_image = createImage(background)
-
-        const scenaryObjects = [
-            new Scenary(
-                {X_Position: 0, Y_Position: 0}, 
-                {width: 1920, height: 1080}, 
-                misc_background_image),
+        const scenaryObjects: Scenary[] = [
+        
         ]
 
         // =======================================================================================================
@@ -244,7 +238,8 @@ const Canvas: React.FC = (props): JSX.Element => {
         const animate = (): void => {
             
             requestAnimationFrame(animate)
-            context.clearRect(0, 0, canvas.width, canvas.height)
+            context.fillStyle = '#27d0e2'
+            context.fillRect(0, 0, canvas.width, canvas.height)
 
             scenaryObjects.forEach((object) => {
                 object.draw()
