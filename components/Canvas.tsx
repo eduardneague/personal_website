@@ -279,7 +279,7 @@ const Canvas: React.FC = (props): JSX.Element => {
         const playerSpeed: number = 5
         const playerImage: HTMLImageElement = createImage(playerIdle)
         const playerFrames: number = 0
-
+    
         const player = new Player(
             playerPosition, 
             playerSize, 
@@ -288,6 +288,8 @@ const Canvas: React.FC = (props): JSX.Element => {
             playerImage,
             playerFrames,
         )
+
+        let lastKey: string = ''
         const keys: PlayerKeysObject = {
             right: {
                 pressed: false
@@ -323,6 +325,25 @@ const Canvas: React.FC = (props): JSX.Element => {
             })
             player.update()
 
+            // Sprite Switching 
+
+            if(keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.walking.right.animation) {
+                player.frames = 1
+                player.currentSprite = player.sprites.walking.right.animation
+            }
+            else if(keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.walking.left.animation) {
+                player.frames = 1
+                player.currentSprite = player.sprites.walking.left.animation
+            }
+            else if(!keys.right.pressed && lastKey === 'right' && player.currentSprite !== player.sprites.idle.animation) {
+                player.frames = 1
+                player.currentSprite = player.sprites.idle.animation
+            }
+            else if(!keys.left.pressed && lastKey === 'left' && player.currentSprite !== player.sprites.idle.animation) {
+                player.frames = 1
+                player.currentSprite = player.sprites.idle.animation
+            }
+           
             // Movement Handler + Background Scrolling
 
             if(keys.right.pressed && player.position.X_Position < 700) { // Right Key + Movement Limit
@@ -392,13 +413,12 @@ const Canvas: React.FC = (props): JSX.Element => {
             switch (key) {
                 case 'ArrowRight':
                     keys.right.pressed = true
-                    player.currentSprite = player.sprites.walking.right.animation
-                    player.currentCropWidth = 473
+                    lastKey = 'right'
                     break;
 
                 case 'ArrowLeft':
                     keys.left.pressed = true
-                    player.currentSprite = player.sprites.walking.left.animation
+                    lastKey = 'left'
                     break;
 
                 case 'ArrowUp':
@@ -414,14 +434,10 @@ const Canvas: React.FC = (props): JSX.Element => {
             switch (key) {
                 case 'ArrowRight':
                     keys.right.pressed = false
-                    player.currentSprite = player.sprites.idle.animation
-                    player.currentCropWidth = 473
                     break;
 
                 case 'ArrowLeft':
                     keys.left.pressed = false
-                    player.currentSprite = player.sprites.idle.animation
-                    player.currentCropWidth = 473
                     break;
 
                 case 'ArrowUp':
