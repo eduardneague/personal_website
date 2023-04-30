@@ -5,6 +5,10 @@ import platform2 from '../src/game_assets/platform_assets/Platform_2.png'
 
 import tree from '../src/game_assets/misc_assets/misc_tree.png'
 
+import playerIdle from '../src/game_assets/player_assets/Player_Idle.png'
+import playerWalkingRight from '../src/game_assets/player_assets/Player_Walking_Right.png'
+import playerWalkingLeft from '../src/game_assets/player_assets/Player_Walking_Left.png'
+
 import  {
     PlayerPositionObject, 
     PlayerVelocityObject, 
@@ -164,7 +168,7 @@ const Canvas: React.FC = (props): JSX.Element => {
         }
 
         const scenaryObjects: Scenary[] = [
-        
+            
         ]
 
         // =======================================================================================================
@@ -180,26 +184,82 @@ const Canvas: React.FC = (props): JSX.Element => {
             position: PlayerPositionObject;
             size: PlayerSizeObject;
             velocity: PlayerVelocityObject;
-            speed: number
-
-            constructor(position: PlayerPositionObject, size: PlayerSizeObject, velocity: PlayerVelocityObject, speed: number) {
+            speed: number;
+            image: HTMLImageElement;
+            frames: number;
+            sprites: { 
+                    idle: {
+                        animation: HTMLImageElement, 
+                        cropWidth: number,
+                    }, 
+                    walking: 
+                    {
+                        right: {
+                            animation: HTMLImageElement,
+                            cropWidth: number
+                        }, 
+                        left: {
+                            animation: HTMLImageElement,
+                            cropWidth: number
+                        }
+                    } 
+                };
+            currentSprite: {};
+            currentCropWidth: number;
+ 
+            constructor(
+                position: PlayerPositionObject, 
+                size: PlayerSizeObject, 
+                velocity: PlayerVelocityObject, 
+                speed: number, 
+                image: HTMLImageElement,
+                frames: number,
+            ) {
                 this.position = position
                 this.size = size
                 this.velocity = velocity
                 this.speed = speed
+                this.image = image
+                this.frames = frames
+                this.sprites = {
+                    idle: {
+                        animation: createImage(playerIdle),
+                        cropWidth: 473
+                    },
+                    walking: {
+                        right: {
+                            animation: createImage(playerWalkingRight), 
+                            cropWidth: 473
+                        },
+                        left: {
+                            animation: createImage(playerWalkingLeft),
+                            cropWidth: 473
+                        }
+                    }
+                }
+                this.currentSprite = this.sprites.idle.animation
+                this.currentCropWidth = 473
             }
     
             draw(): void {
-                context.fillStyle = 'red'
-                context.fillRect(
+                context.drawImage(
+                    this.currentSprite,
+                    this.currentCropWidth * this.frames, // sprite crop
+                    0,
+                    473, // width of each sprite
+                    801, // height of each sprite
                     this.position.X_Position, 
                     this.position.Y_Position, 
-                    this.size.width, 
+                    this.size.width,
                     this.size.height
                 )
             }
 
             update(): void {
+                this.frames++;
+                if(this.frames >= 68) {
+                    this.frames = 0;
+                }
                 this.draw()
                 this.position.Y_Position += this.velocity.Y_Velocity
                 this.position.X_Position += this.velocity.X_Velocity
@@ -214,11 +274,20 @@ const Canvas: React.FC = (props): JSX.Element => {
         // Player Properties
 
         const playerPosition: PlayerPositionObject = {X_Position: 100, Y_Position: 0}
-        const playerSize: PlayerSizeObject = {width: 30, height: 30}
+        const playerSize: PlayerSizeObject = {width: 150, height: 260}
         const playerVelocity: PlayerVelocityObject = {X_Velocity: 0, Y_Velocity: 0}
         const playerSpeed: number = 5
+        const playerImage: HTMLImageElement = createImage(playerIdle)
+        const playerFrames: number = 0
 
-        const player = new Player(playerPosition, playerSize, playerVelocity, playerSpeed)
+        const player = new Player(
+            playerPosition, 
+            playerSize, 
+            playerVelocity, 
+            playerSpeed, 
+            playerImage,
+            playerFrames,
+        )
         const keys: PlayerKeysObject = {
             right: {
                 pressed: false
@@ -323,15 +392,18 @@ const Canvas: React.FC = (props): JSX.Element => {
             switch (key) {
                 case 'ArrowRight':
                     keys.right.pressed = true
+                    player.currentSprite = player.sprites.walking.right.animation
+                    player.currentCropWidth = 473
                     break;
 
                 case 'ArrowLeft':
                     keys.left.pressed = true
+                    player.currentSprite = player.sprites.walking.left.animation
                     break;
 
                 case 'ArrowUp':
                     keys.up.pressed = true
-                    player.velocity.Y_Velocity = -15
+                    player.velocity.Y_Velocity = -15 // has to be here, movement fix
                     break;
             }
         })
@@ -342,10 +414,14 @@ const Canvas: React.FC = (props): JSX.Element => {
             switch (key) {
                 case 'ArrowRight':
                     keys.right.pressed = false
+                    player.currentSprite = player.sprites.idle.animation
+                    player.currentCropWidth = 473
                     break;
 
                 case 'ArrowLeft':
                     keys.left.pressed = false
+                    player.currentSprite = player.sprites.idle.animation
+                    player.currentCropWidth = 473
                     break;
 
                 case 'ArrowUp':
