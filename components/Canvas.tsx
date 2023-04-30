@@ -259,12 +259,11 @@ const Canvas: React.FC = (props): JSX.Element => {
             if(keys.right.pressed && player.position.X_Position < 700) { // Right Key + Movement Limit
                 player.velocity.X_Velocity = player.speed
             }
-            else if(keys.left.pressed && player.position.X_Position > 200) { // Left Key + Movement Limit
+            else if(keys.left.pressed && player.position.X_Position > 200 || 
+                keys.left.pressed && scrollOffset === 0 && player.position.X_Position > 0) { // Left Key + Movement Limit
                 player.velocity.X_Velocity = -player.speed
             }  
-            else if (keys.up.pressed) { // Jump Key
-                player.velocity.Y_Velocity = -13
-            } else {
+            else {
                 player.velocity.X_Velocity = 0
 
                 // Background Scrolling
@@ -285,7 +284,7 @@ const Canvas: React.FC = (props): JSX.Element => {
 
                 // Scrolling (To the Right) when Moving Left
 
-                if(keys.left.pressed) {
+                else if(keys.left.pressed && scrollOffset > 0) {
                     scrollOffset -= player.speed 
 
                     miscObjects.forEach((object) => {
@@ -332,6 +331,7 @@ const Canvas: React.FC = (props): JSX.Element => {
 
                 case 'ArrowUp':
                     keys.up.pressed = true
+                    player.velocity.Y_Velocity = -15
                     break;
             }
         })
