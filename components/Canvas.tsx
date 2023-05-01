@@ -246,7 +246,7 @@ const Canvas: React.FC = (props): JSX.Element => {
                     this.currentSprite,
                     this.currentCropWidth * this.frames, // sprite crop
                     0,
-                    473, // width of each sprite
+                    this.currentCropWidth, // width of each sprite
                     801, // height of each sprite
                     this.position.X_Position, 
                     this.position.Y_Position, 
